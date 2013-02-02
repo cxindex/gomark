@@ -8,8 +8,8 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
-	"time"
 	"strings"
+	"time"
 )
 
 var (
@@ -21,7 +21,7 @@ var (
 	page            int
 	array           []block
 	input, oldinput []rune
-	bookmarks = os.Getenv("HOME")+"/.bookmarks.json"
+	bookmarks       = os.Getenv("HOME") + "/.conkeror.mozdev.org/bookmarks.json"
 )
 
 type block struct {
@@ -59,6 +59,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	termbox.SetInputMode(termbox.InputAlt)
 	defer termbox.Close()
 	open()
 	redraw()
@@ -66,6 +67,14 @@ func main() {
 		switch ev := termbox.PollEvent(); ev.Type {
 		case termbox.EventKey:
 			switch ev.Key {
+			case termbox.KeyPgup:
+				if page != 0 && y >= 0 {
+					y = -1
+				} else {
+					y = 0
+				}				
+			case termbox.KeyCtrlV, termbox.KeyPgdn:
+				y = array[last].y
 			case termbox.KeyEsc, termbox.KeyCtrlC, termbox.KeyCtrlQ:
 				return
 			case termbox.KeyBackspace, termbox.KeyBackspace2:
@@ -82,7 +91,7 @@ func main() {
 					}
 				}
 			case termbox.KeyArrowUp, termbox.KeyCtrlP:
-				if! (page == 0 && y == 0) {
+				if !(page == 0 && y == 0) {
 					y = y - 2
 				}
 			case termbox.KeyArrowDown, termbox.KeyCtrlN:
@@ -99,7 +108,15 @@ func main() {
 				input = []rune("")
 			}
 			if ev.Ch != 0 {
-				input = append(input, ev.Ch)
+				if ev.Mod == termbox.ModAlt && ev.Ch == 118 {
+					if page != 0 && y >= 0 {
+						y = -1
+					} else {
+						y = 0
+					}
+				} else {
+					input = append(input, ev.Ch)
+				}
 			}
 			fallthrough
 		default:
@@ -160,7 +177,7 @@ func open() {
 	}
 }
 
-func add(newbm *bm)  {
+func add(newbm *bm) {
 	s, err := json.Marshal(newbm)
 	if err != nil {
 		fmt.Println(err)
