@@ -72,7 +72,7 @@ func main() {
 					y = -1
 				} else {
 					y = 0
-				}				
+				}
 			case termbox.KeyCtrlV, termbox.KeyPgdn:
 				y = array[last].y
 			case termbox.KeyEsc, termbox.KeyCtrlC, termbox.KeyCtrlQ:
@@ -137,11 +137,19 @@ func redraw() {
 		if ok, _ := regexp.MatchString(string(input), fmt.Sprintf("%+v", v.b)); ok {
 			if y > sy {
 				gty = gty - sy
-				y = 0
+				if sy%2 == 0 {
+					y = 0
+				} else {
+					y = 1
+				}
 				page++
 			} else if y < 0 {
 				gty = gty + sy
-				y = sy - 2
+				if sy%2 == 0 {
+					y = sy - 2
+				} else {
+					y = sy - 1
+				}
 				page--
 			}
 			array[k].x, array[k].y = tx, ty+gty
