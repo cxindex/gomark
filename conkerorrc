@@ -1,24 +1,24 @@
 interactive("gomark",
-                        "gomark",
-                        function (I) {
-                                var args = [null, "-e", "gomark"];
-                                var result = yield  spawn_and_wait_for_process("xfce4-terminal", args);
-                        });
+    "gomark",
+    function (I) {
+        var args = [null, "-e", "gomark"];
+        var result = yield spawn_and_wait_for_process("xfce4-terminal", args);
+    });
 
 interactive("gomark-post",
-                        "gomark-post",
-                        function (I) {
-                url = load_spec_uri_string(
-                                                load_spec(I.buffer.top_frame));
-                                name = yield I.minibuffer.read(
-                                        $prompt = "name (required): ",
-                                        $initial_value = I.buffer.title);
-                                name = unescape(encodeURIComponent(name))
-                                tags = yield I.minibuffer.read(
-                                        $prompt = "tags (space delimited): ");
-                                var args = [null, name, url, tags ];
-                                var result = yield  spawn_and_wait_for_process("gomark", args);
-                        });
+    "gomark-post",
+    function (I) {
+        url = load_spec_uri_string(
+            load_spec(I.buffer.top_frame));
+        name = yield I.minibuffer.read(
+            $prompt = "name (required): ",
+            $initial_value = I.buffer.title);
+        name = unescape(encodeURIComponent(name))
+        tags = yield I.minibuffer.read(
+            $prompt = "tags (space delimited): ");
+        var args = [null, name, url, tags];
+        var result = yield spawn_and_wait_for_process("gomark", args);
+    });
 
 define_key(default_global_keymap, "p", "gomark");
 define_key(default_global_keymap, "P", "gomark-post");
